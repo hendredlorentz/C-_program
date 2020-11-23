@@ -1,0 +1,10 @@
+G:\C#prictise\Homework1019\Homework1019\bin\Debug\Homework1019.exe.config
+G:\C#prictise\Homework1019\Homework1019\bin\Debug\Homework1019.exe
+G:\C#prictise\Homework1019\Homework1019\bin\Debug\Homework1019.pdb
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.csprojAssemblyReference.cache
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.Form1.resources
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.Properties.Resources.resources
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.csproj.GenerateResource.cache
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.csproj.CoreCompileInputs.cache
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.exe
+G:\C#prictise\Homework1019\Homework1019\obj\Debug\Homework1019.pdb

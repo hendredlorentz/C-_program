@@ -1,0 +1,10 @@
+G:\C#prictise\newDuanKouTest\newDuanKouTest\bin\Debug\newDuanKouTest.exe.config
+G:\C#prictise\newDuanKouTest\newDuanKouTest\bin\Debug\newDuanKouTest.exe
+G:\C#prictise\newDuanKouTest\newDuanKouTest\bin\Debug\newDuanKouTest.pdb
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.csprojAssemblyReference.cache
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.Form1.resources
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.Properties.Resources.resources
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.csproj.GenerateResource.cache
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.csproj.CoreCompileInputs.cache
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.exe
+G:\C#prictise\newDuanKouTest\newDuanKouTest\obj\Debug\newDuanKouTest.pdb

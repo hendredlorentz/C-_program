@@ -1,0 +1,26 @@
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\bin\Debug\Browser.exe
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\bin\Debug\Browser.pdb
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\Browser.Form1.resources
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\Browser.Properties.Resources.resources
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\Browser.csproj.GenerateResource.Cache
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\Browser.exe
+C:\Users\PowerGly\Documents\Visual Studio 2008\Projects\Browser\Browser\obj\Debug\Browser.pdb
+G:\C#class\Browser\Browser\bin\Debug\Browser.exe
+G:\C#class\Browser\Browser\bin\Debug\Browser.pdb
+G:\C#class\Browser\Browser\obj\Debug\Browser.csprojAssemblyReference.cache
+G:\C#class\Browser\Browser\obj\Debug\Browser.Form1.resources
+G:\C#class\Browser\Browser\obj\Debug\Browser.Properties.Resources.resources
+G:\C#class\Browser\Browser\obj\Debug\Browser.csproj.GenerateResource.cache
+G:\C#class\Browser\Browser\obj\Debug\Browser.csproj.CoreCompileInputs.cache
+G:\C#class\Browser\Browser\obj\Debug\Browser.exe
+G:\C#class\Browser\Browser\obj\Debug\Browser.pdb
+G:\C#prictise\Browser\Browser\bin\Debug\Browser.exe
+G:\C#prictise\Browser\Browser\bin\Debug\Browser.pdb
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.csprojAssemblyReference.cache
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.Form1.resources
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.Properties.Resources.resources
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.csproj.GenerateResource.cache
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.csproj.CoreCompileInputs.cache
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.exe
+G:\C#prictise\Browser\Browser\obj\Debug\Browser.pdb

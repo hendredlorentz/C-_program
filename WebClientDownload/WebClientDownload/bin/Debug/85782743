@@ -1,0 +1,1616 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <link rel="canonical" href="https://blog.csdn.net/weixin_34197488/article/details/85782743"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="renderer" content="webkit"/>
+    <meta name="force-rendering" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="report" content='{"pid": "blog", "spm":"1001.2101"}'>
+    <meta name="referrer" content="always">
+    <meta http-equiv="Cache-Control" content="no-siteapp" /><link rel="alternate" media="handheld" href="#" />
+    <meta name="shenma-site-verification" content="5a59773ab8077d4a62bf469ab966a63b_1497598848">
+    <meta name="applicable-device" content="pc">
+    <link  href="https://g.csdnimg.cn/static/logo/favicon32.ico"  rel="shortcut icon" type="image/x-icon" />
+    <title>【Linux程序设计】之进程间的通信_weixin_34197488的博客-CSDN博客</title>
+    <script>
+      (function(){ 
+        var el = document.createElement("script"); 
+        el.src = "https://s3a.pstatp.com/toutiao/push.js?1abfa13dfe74d72d41d83c86d240de427e7cac50c51ead53b2e79d40c7952a23ed7716d05b4a0f683a653eab3e214672511de2457e74e99286eb2c33f4428830"; 
+        el.id = "ttzz"; 
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(el, s);
+      })(window)
+    </script>
+        <meta name="keywords" content="【Linux程序设计】之进程间的通信">
+        <meta name="csdn-baidu-search"  content='{"autorun":true,"install":true,"keyword":"【Linux程序设计】之进程间的通信"}'>
+    <meta name="description" content="这个系列的博客贴的都是我大二的时候学习Linux系统高级编程时的一些实验程序，都挺简单的。实验题目：Linux环境下的进程间通信实验目的：熟悉进程通信中信号概念及信号处理；掌握进程间的管道通信编程；了解进程间的内存共享编程。实验内容：一、信号设计程序，满足如下要求：1、编程程序：每隔1秒显示“running….”一次，显示8次后，程序结束。应用函数alarm，在程序开始运行...">
+    <script src='//g.csdnimg.cn/tingyun/1.8.3/blog.js' type='text/javascript'></script>
+        <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/css/detail_enter-9bf4a3089f.min.css">
+    <script type="application/ld+json">{"@context":"https://ziyuan.baidu.com/contexts/cambrian.jsonld","@id":"https://blog.csdn.net/weixin_34197488/article/details/85782743","appid":"1638831770136827","pubDate":"2015-12-11T22:36:00","title":"【Linux程序设计】之进程间的通信_weixin_34197488的博客-CSDN博客","upDate":"2015-12-11T22:36:00"}</script>
+        <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/release/blogv2/dist/pc/themesSkin/skin3-template/skin3-template-45808e735f.min.css">
+    <script src="https://csdnimg.cn/public/common/libs/jquery/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        var isCorporate = false;//注释删除enterprise
+        var username =  "weixin_34197488";
+        var skinImg = "white";
+        var blog_address = "https://blog.csdn.net/weixin_34197488";
+        var currentUserName = "";
+        var isOwner = false;
+        var loginUrl = "http://passport.csdn.net/account/login?from=https://blog.csdn.net/weixin_34197488/article/details/85782743";
+        var blogUrl = "https://blog.csdn.net/";
+        var avatar = "https://profile.csdnimg.cn/3/B/3/3_weixin_34197488";
+        var articleTitle = "【Linux程序设计】之进程间的通信";
+        var articleDesc = "这个系列的博客贴的都是我大二的时候学习Linux系统高级编程时的一些实验程序，都挺简单的。实验题目：Linux环境下的进程间通信实验目的：熟悉进程通信中信号概念及信号处理；掌握进程间的管道通信编程；了解进程间的内存共享编程。实验内容：一、信号设计程序，满足如下要求：1、编程程序：每隔1秒显示“running….”一次，显示8次后，程序结束。应用函数alarm，在程序开始运行...";
+        var articleTitles = "【Linux程序设计】之进程间的通信_weixin_34197488的博客-CSDN博客";
+        var nickName = "weixin_34197488";
+        var articleDetailUrl = "https://blog.csdn.net/weixin_34197488/article/details/85782743";
+        if(window.location.host.split('.').length == 3) {
+            blog_address = blogUrl + username;
+        }
+        var skinStatus = "White";
+        var blogStaticHost = "https://csdnimg.cn/release/blogv2/"
+    </script>
+    <script src="https://g.csdnimg.cn/??fixed-sidebar/1.1.6/fixed-sidebar.js,report/1.5.8/report.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="https://csdnimg.cn/public/sandalstrap/1.4/css/sandalstrap.min.css">
+    <style>
+        .MathJax, .MathJax_Message, .MathJax_Preview{
+            display: none
+        }
+    </style>
+    <script src="https://dup.baidustatic.com/js/ds.js"></script>
+</head>
+<body class="nodata " style="">
+        <script>
+            var toolbarSearchExt = '{"landingWord":[],"queryWord":"","tag":["操作系统"],"title":"【Linux程序设计】之进程间的通信"}';
+        </script>
+    <script src="https://g.csdnimg.cn/common/csdn-toolbar/csdn-toolbar.js" type="text/javascript"></script>
+    <script>
+    (function(){
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+    </script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/pc/css/blog_code-01256533b5.min.css">
+<link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/chart-3456820cac.css" />
+<div class="main_father clearfix d-flex justify-content-center" style="height:100%;"> 
+    <div class="container clearfix" id="mainBox">
+        <main>
+<script type="text/javascript">
+    var blogSensitiveWords = "";
+</script>
+<div class="blog-content-box">
+    <div class="article-header-box">
+        <div class="article-header">
+            <div class="article-title-box">
+                <h1 class="title-article" id="articleContentId">【Linux程序设计】之进程间的通信</h1>
+            </div>
+            <div class="article-info-box">
+                <div class="article-bar-top">
+                    <img class="article-type-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/reprint.png" alt="">
+                    <div class="bar-content">
+                    <a class="follow-nickName" href="https://me.csdn.net/weixin_34197488" target="_blank" rel="noopener">weixin_34197488</a>
+                    <span class="time">2015-12-11 22:36:00</span>
+                    <img class="article-read-img article-heard-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/articleReadEyes.png" alt="">
+                    <span class="read-count">96</span>
+                    <a id="blog_detail_zk_collection" class="un-collection" data-report-click='{"mod":"popu_823","spm":"1001.2101.3001.4232","ab":"new"}'>
+                        <img class="article-collect-img article-heard-img un-collect-status" style="display:inline-block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollect.png" alt="">
+                        <img class="article-collect-img article-heard-img collect-status" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive.png" alt="">
+                        <span class="name">收藏</span>
+                        <span class="get-collection">
+                            1
+                        </span>
+                    </a>
+                    </div>
+                </div>
+                <div class="blog-tags-box">
+                    <div class="tags-box artic-tag-box">
+                            <span class="label">文章标签：</span>
+                                <a data-report-click='{"mod":"popu_626","spm":"1001.2101.3001.4223","strategy":"操作系统","ab":"new"}' class="tag-link" href="https://www.csdn.net/gather_22/MtTacg0sNTgzNi1ibG9n.html" target="_blank" rel="noopener">操作系统</a>
+                    </div>
+                </div>
+                <div class="up-time"><span>最后发布:2015-12-11 22:36:00</span><span>首次发布:2015-12-11 22:36:00</span></div>
+                <div class="slide-content-box">
+                </div>
+                <div class="operating">
+                </div>
+            </div>
+        </div>
+    </div>
+    <article class="baidu_pl">
+        <div id="article_content" class="article_content clearfix">
+        <link rel="stylesheet" href="https://csdnimg.cn/release/blogv2/dist/mdeditor/css/editerView/ck_htmledit_views-b5506197d8.css">
+                <div id="content_views" class="htmledit_views">
+                    <div id="cnblogs_post_body" class="blogpost-body">
+ <p>这个系列的博客贴的都是我大二的时候学习Linux系统高级编程时的一些实验程序&#xff0c;都挺简单的。</p> 
+ <p><strong>实验题目&#xff1a;</strong><strong>Linux</strong><strong>环境下的进程间通信</strong></p> 
+ <p><strong>实验目的&#xff1a;熟悉进程通信中信号概念及信号处理&#xff1b;掌握进程间的管道通信编程&#xff1b;了解进程间的内存共享编程。</strong></p> 
+ <p><strong>实验内容&#xff1a;</strong></p> 
+ <p><strong>一、信号</strong></p> 
+ <p><strong>设计程序&#xff0c;满足如下要求&#xff1a;</strong></p> 
+ <p><strong>1</strong><strong>、编程程序&#xff1a;每隔</strong><strong>1</strong><strong>秒显示“</strong><strong>running….</strong><strong>”一次&#xff0c;显示</strong><strong>8</strong><strong>次后&#xff0c;程序结束。应用函数</strong><strong>alarm</strong><strong>&#xff0c;在程序开始运行</strong><strong>5</strong><strong>秒后发送信号</strong><strong>SIGALRM</strong><strong>&#xff0c;并实现&#xff1a;</strong><strong>1</strong><strong>&#xff09;程序接收到</strong><strong>SIGALRM</strong><strong>信号就被终止&#xff1b;</strong><strong>2</strong><strong>&#xff09;自定义信号处理函数&#xff0c;在程序接收到</strong><strong>SIGALRM</strong><strong>信号后&#xff0c;循环显示三次“</strong><strong>handling SIGALRM</strong><strong>”。</strong></p> 
+ <div class="cnblogs_code"> 
+  <pre><span style="color:#008080;"> 1</span> #include&lt;stdio.h&gt;
+<span style="color:#008080;"> 2</span> #include&lt;unistd.h&gt;
+<span style="color:#008080;"> 3</span> #include&lt;signal.h&gt;
+<span style="color:#008080;"> 4</span> #include&lt;stdlib.h&gt;
+<span style="color:#008080;"> 5</span> <span style="color:#0000ff;">int</span><span style="color:#000000;"> main()
+</span><span style="color:#008080;"> 6</span> <span style="color:#000000;">{
+</span><span style="color:#008080;"> 7</span>     alarm(<span style="color:#800080;">5</span><span style="color:#000000;">);
+</span><span style="color:#008080;"> 8</span>     <span style="color:#0000ff;">int</span><span style="color:#000000;"> i;
+</span><span style="color:#008080;"> 9</span>     <span style="color:#0000ff;">for</span>(i&#61;<span style="color:#800080;">0</span>;i&lt;&#61;<span style="color:#800080;">7</span>;i&#43;&#43;<span style="color:#000000;">)
+</span><span style="color:#008080;">10</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">11</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">running…\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">12</span>     sleep(<span style="color:#800080;">1</span><span style="color:#000000;">);
+</span><span style="color:#008080;">13</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">14</span>     <span style="color:#0000ff;">return</span> <span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;">15</span> }</pre> 
+ </div> 
+ <div class="cnblogs_code"> 
+  <pre><span style="color:#008080;"> 1</span> #include&lt;stdio.h&gt;
+<span style="color:#008080;"> 2</span> #include&lt;unistd.h&gt;
+<span style="color:#008080;"> 3</span> #include&lt;signal.h&gt;
+<span style="color:#008080;"> 4</span> #include&lt;stdlib.h&gt;
+<span style="color:#008080;"> 5</span> <span style="color:#0000ff;">void</span><span style="color:#000000;"> fun()
+</span><span style="color:#008080;"> 6</span> <span style="color:#000000;">{
+</span><span style="color:#008080;"> 7</span>     <span style="color:#0000ff;">int</span> i&#61;<span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;"> 8</span>     <span style="color:#0000ff;">for</span>(i&#61;<span style="color:#800080;">0</span>;i&lt;&#61;<span style="color:#800080;">2</span>;i&#43;&#43;<span style="color:#000000;">)
+</span><span style="color:#008080;"> 9</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">10</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">handling SIGALRM \n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">11</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">12</span> <span style="color:#000000;">}
+</span><span style="color:#008080;">13</span> <span style="color:#0000ff;">int</span><span style="color:#000000;"> main()
+</span><span style="color:#008080;">14</span> <span style="color:#000000;">{
+</span><span style="color:#008080;">15</span>     (<span style="color:#0000ff;">void</span><span style="color:#000000;">)signal(SIGALRM,fun);
+</span><span style="color:#008080;">16</span>     alarm(<span style="color:#800080;">5</span><span style="color:#000000;">);
+</span><span style="color:#008080;">17</span>     <span style="color:#0000ff;">int</span><span style="color:#000000;"> i;
+</span><span style="color:#008080;">18</span>     <span style="color:#0000ff;">for</span>(i&#61;<span style="color:#800080;">0</span>;i&lt;&#61;<span style="color:#800080;">7</span>;i&#43;&#43;<span style="color:#000000;">)
+</span><span style="color:#008080;">19</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">20</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">running…\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">21</span>     sleep(<span style="color:#800080;">1</span><span style="color:#000000;">);
+</span><span style="color:#008080;">22</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">23</span>     <span style="color:#0000ff;">return</span> <span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;">24</span> }</pre> 
+ </div> 
+ <p> </p> 
+ <p>2、设计一个程序&#xff0c;要求用户进程创建一个子进程&#xff0c;子进程发送SIGSTOP将自身挂起&#xff0c;父进程向子进程发出SIGKILL信号&#xff0c;子进程收到此信号&#xff0c;结束子进程的运行。</p> 
+ <div class="cnblogs_code"> 
+  <pre><span style="color:#008080;"> 1</span> #include&lt;stdio.h&gt;
+<span style="color:#008080;"> 2</span> #include&lt;unistd.h&gt;
+<span style="color:#008080;"> 3</span> #include&lt;stdlib.h&gt;
+<span style="color:#008080;"> 4</span> #include&lt;signal.h&gt;
+<span style="color:#008080;"> 5</span> <span style="color:#0000ff;">int</span><span style="color:#000000;"> main()
+</span><span style="color:#008080;"> 6</span> <span style="color:#000000;">{
+</span><span style="color:#008080;"> 7</span> <span style="color:#000000;">    pid_t pid;
+</span><span style="color:#008080;"> 8</span>     pid&#61;<span style="color:#000000;">fork();
+</span><span style="color:#008080;"> 9</span>     <span style="color:#0000ff;">int</span><span style="color:#000000;"> ret;
+</span><span style="color:#008080;">10</span>     <span style="color:#0000ff;">if</span>(pid &lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">11</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">12</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">Error Exit!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">13</span>         exit(<span style="color:#800080;">1</span><span style="color:#000000;">);
+</span><span style="color:#008080;">14</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">15</span>     <span style="color:#0000ff;">else</span> <span style="color:#0000ff;">if</span>(pid&#61;&#61;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">16</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">17</span> <span style="color:#000000;">        raise(SIGSTOP);
+</span><span style="color:#008080;">18</span>         exit(<span style="color:#800080;">0</span><span style="color:#000000;">);
+</span><span style="color:#008080;">19</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">20</span>     <span style="color:#0000ff;">else</span>
+<span style="color:#008080;">21</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">22</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">子进程的进程号是&#xff1a;%d\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">,pid);
+</span><span style="color:#008080;">23</span>         <span style="color:#0000ff;">if</span>(waitpid(pid,NULL,WNOHANG)&#61;&#61;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">24</span> <span style="color:#000000;">        {
+</span><span style="color:#008080;">25</span>             <span style="color:#0000ff;">if</span>(ret&#61;kill(pid,SIGKILL)&#61;&#61;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">26</span> <span style="color:#000000;">            {
+</span><span style="color:#008080;">27</span>                 ptintf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">fun kill&#39;s return is %d,pid is%d\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">,ret,pid);
+</span><span style="color:#008080;">28</span> <span style="color:#000000;">            }
+</span><span style="color:#008080;">29</span> <span style="color:#000000;">        }
+</span><span style="color:#008080;">30</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">31</span>     <span style="color:#0000ff;">return</span> <span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;">32</span> }</pre> 
+ </div> 
+ <p> </p> 
+ <p>3、设计一个程序&#xff0c;要求程序运行后进入无限循环&#xff0c;要求主程序运行时&#xff0c;即使用户按下中断键&#xff08;Ctrl&#43;Z和Ctrl&#43;\&#xff09;&#xff0c;也不能影响正在运行的程序&#xff0c;即让信号处于阻塞状态&#xff0c;当主体程序运行完毕后才进入自定义信号处理函数&#xff0c;当用户再次按下中断键&#xff08;Ctrl&#43;Z和Ctrl&#43;\&#xff09;后&#xff0c;结束程序运行。</p> 
+ <div class="cnblogs_code"> 
+  <pre><span style="color:#008080;"> 1</span> #include&lt;stdio.h&gt;
+<span style="color:#008080;"> 2</span> #include&lt;unistd.h&gt;
+<span style="color:#008080;"> 3</span> #include&lt;signal.h&gt;
+<span style="color:#008080;"> 4</span> #include&lt;sys/types.h&gt;
+<span style="color:#008080;"> 5</span> #include&lt;stdlib.h&gt;
+<span style="color:#008080;"> 6</span> <span style="color:#0000ff;">void</span><span style="color:#000000;"> fun_z()
+</span><span style="color:#008080;"> 7</span> <span style="color:#000000;">{
+</span><span style="color:#008080;"> 8</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">you press Ctrl&#43;z\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;"> 9</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">Ctrl &#43; z is useable now!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">10</span> <span style="color:#000000;">    signal(SIGTSTP,SIG_DFL);
+</span><span style="color:#008080;">11</span> 
+<span style="color:#008080;">12</span> <span style="color:#000000;">}
+</span><span style="color:#008080;">13</span> <span style="color:#0000ff;">void</span><span style="color:#000000;"> fun_d()
+</span><span style="color:#008080;">14</span> <span style="color:#000000;">{
+</span><span style="color:#008080;">15</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">you press &#39;Ctrl&#43;\&#39; \n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">16</span>     printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">Ctrl &#43; d is useable now!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">17</span> <span style="color:#000000;">    signal(SIGQUIT,SIG_DFL);
+</span><span style="color:#008080;">18</span> 
+<span style="color:#008080;">19</span> <span style="color:#000000;">}
+</span><span style="color:#008080;">20</span> <span style="color:#0000ff;">int</span><span style="color:#000000;"> main()
+</span><span style="color:#008080;">21</span> <span style="color:#000000;">{
+</span><span style="color:#008080;">22</span>     <span style="color:#0000ff;">int</span><span style="color:#000000;"> i;
+</span><span style="color:#008080;">23</span>     sigset_t <span style="color:#0000ff;">set</span><span style="color:#000000;">,pendset;
+</span><span style="color:#008080;">24</span>     <span style="color:#0000ff;">struct</span><span style="color:#000000;"> sigaction action;
+</span><span style="color:#008080;">25</span> <span style="color:#000000;">    signal(SIGTSTP,fun_z);
+</span><span style="color:#008080;">26</span> <span style="color:#000000;">    signal(SIGQUIT,fun_d);
+</span><span style="color:#008080;">27</span>     <span style="color:#0000ff;">if</span>(sigemptyset(&amp;<span style="color:#0000ff;">set</span>)&lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">28</span>         perror(<span style="color:#800000;">&#34;</span><span style="color:#800000;">init sign error!</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">29</span>     <span style="color:#0000ff;">if</span>(sigaddset(&amp;<span style="color:#0000ff;">set</span>,SIGTSTP)&lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">30</span>         perror(<span style="color:#800000;">&#34;</span><span style="color:#800000;">add ctrl&#43;z error!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">31</span>     <span style="color:#0000ff;">if</span>(sigaddset(&amp;<span style="color:#0000ff;">set</span>,SIGQUIT)&lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">32</span>             perror(<span style="color:#800000;">&#34;</span><span style="color:#800000;">ass &#39;ctrl&#43;\&#39; error!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">33</span>     <span style="color:#0000ff;">while</span>(<span style="color:#800080;">1</span><span style="color:#000000;">)
+</span><span style="color:#008080;">34</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">35</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">Ctrl &#43;z and &#39;Ctrl &#43;\&#39; is zuse!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">36</span>         sleep(<span style="color:#800080;">2</span><span style="color:#000000;">);
+</span><span style="color:#008080;">37</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">38</span> 
+<span style="color:#008080;">39</span>     <span style="color:#0000ff;">return</span> <span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;">40</span> }</pre> 
+ </div> 
+ <p> </p> 
+ <p><strong>二、管道</strong></p> 
+ <p><strong>1</strong><strong>、设计一个程序&#xff0c;要求创建一个管道&#xff0c;复制进程&#xff0c;父进程往管道中写入字符串“</strong><strong>how are you!</strong><strong>”&#xff0c;子进程从管道中读取并输入字符串“</strong><strong>how are you!</strong><strong>”。</strong></p> 
+ <div class="cnblogs_code"> 
+  <pre><span style="color:#008080;"> 1</span> #include&lt;stdio.h&gt;
+<span style="color:#008080;"> 2</span> #include&lt;stdlib.h&gt;
+<span style="color:#008080;"> 3</span> #include&lt;sys/types.h&gt;
+<span style="color:#008080;"> 4</span> #include&lt;sys/wait.h&gt;
+<span style="color:#008080;"> 5</span> #include&lt;unistd.h&gt;
+<span style="color:#008080;"> 6</span> #include&lt;<span style="color:#0000ff;">string</span>.h&gt;
+<span style="color:#008080;"> 7</span> <span style="color:#0000ff;">int</span><span style="color:#000000;">  main()
+</span><span style="color:#008080;"> 8</span> <span style="color:#000000;">{
+</span><span style="color:#008080;"> 9</span> <span style="color:#000000;">    pid_t result;
+</span><span style="color:#008080;">10</span>     <span style="color:#0000ff;">int</span><span style="color:#000000;"> n;
+</span><span style="color:#008080;">11</span>     <span style="color:#0000ff;">int</span> pipe_fd[<span style="color:#800080;">2</span><span style="color:#000000;">];
+</span><span style="color:#008080;">12</span>     <span style="color:#0000ff;">char</span> buf1[<span style="color:#800080;">100</span>],buf2[<span style="color:#800080;">100</span><span style="color:#000000;">];
+</span><span style="color:#008080;">13</span>     memset(buf1,<span style="color:#800080;">0</span>,<span style="color:#0000ff;">sizeof</span><span style="color:#000000;">(buf1));
+</span><span style="color:#008080;">14</span>         <span style="color:#0000ff;">if</span>(pipe(pipe_fd)&lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">15</span> <span style="color:#000000;">        {
+</span><span style="color:#008080;">16</span>             printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">error!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">17</span>             <span style="color:#0000ff;">return</span> -<span style="color:#800080;">1</span><span style="color:#000000;">;
+</span><span style="color:#008080;">18</span> <span style="color:#000000;">        }
+</span><span style="color:#008080;">19</span>     result&#61;<span style="color:#000000;">fork();
+</span><span style="color:#008080;">20</span>     <span style="color:#0000ff;">if</span>(result&lt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">21</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">22</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">error!\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">23</span>         exit(<span style="color:#800080;">0</span><span style="color:#000000;">);
+</span><span style="color:#008080;">24</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">25</span>     <span style="color:#0000ff;">else</span> <span style="color:#0000ff;">if</span>(result&#61;&#61;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">26</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">27</span>         close(pipe_fd[<span style="color:#800080;">1</span><span style="color:#000000;">]);
+</span><span style="color:#008080;">28</span>         <span style="color:#0000ff;">if</span>((n &#61;read(pipe_fd[<span style="color:#800080;">0</span>],buf1,<span style="color:#800080;">100</span>))&gt;<span style="color:#800080;">0</span><span style="color:#000000;">)
+</span><span style="color:#008080;">29</span> <span style="color:#000000;">        {
+</span><span style="color:#008080;">30</span>             printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">child read %d char,char is %s\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">,n,buf1);
+</span><span style="color:#008080;">31</span>             close(pipe_fd[<span style="color:#800080;">0</span><span style="color:#000000;">]);
+</span><span style="color:#008080;">32</span>             exit(<span style="color:#800080;">0</span><span style="color:#000000;">);
+</span><span style="color:#008080;">33</span> <span style="color:#000000;">        }
+</span><span style="color:#008080;">34</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">35</span>     <span style="color:#0000ff;">else</span>
+<span style="color:#008080;">36</span> <span style="color:#000000;">    {
+</span><span style="color:#008080;">37</span>         close(pipe_fd[<span style="color:#800080;">0</span><span style="color:#000000;">]);
+</span><span style="color:#008080;">38</span>         printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">please input pipe word \n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">);
+</span><span style="color:#008080;">39</span>         fgets(buf2,<span style="color:#0000ff;">sizeof</span><span style="color:#000000;">(buf2),stdin);
+</span><span style="color:#008080;">40</span>         <span style="color:#0000ff;">if</span>(write(pipe_fd[<span style="color:#800080;">1</span>],buf2,strlen(buf2))!&#61;-<span style="color:#800080;">1</span><span style="color:#000000;">)
+</span><span style="color:#008080;">41</span>             printf(<span style="color:#800000;">&#34;</span><span style="color:#800000;">parent write to child is: %s\n</span><span style="color:#800000;">&#34;</span><span style="color:#000000;">,buf2);
+</span><span style="color:#008080;">42</span>         close(pipe_fd[<span style="color:#800080;">1</span><span style="color:#000000;">]);
+</span><span style="color:#008080;">43</span>         waitpid(result,NULL,<span style="color:#800080;">0</span><span style="color:#000000;">);
+</span><span style="color:#008080;">44</span>         exit(<span style="color:#800080;">0</span><span style="color:#000000;">);
+</span><span style="color:#008080;">45</span> <span style="color:#000000;">    }
+</span><span style="color:#008080;">46</span> 
+<span style="color:#008080;">47</span>     <span style="color:#0000ff;">return</span> <span style="color:#800080;">0</span><span style="color:#000000;">;
+</span><span style="color:#008080;">48</span> }</pre> 
+ </div> 
+ <p> </p> 
+ <p><strong>2</strong><strong>、设计一个程序&#xff0c;要求用</strong><strong>popen</strong><strong>创建管道&#xff0c;实现“</strong><strong>rpm -qa | grep nfs</strong><strong>”的功能。</strong></p> 
+ <p><strong>3</strong><strong>、设计一个程序&#xff0c;要求创建一个管道</strong><strong>PIPE</strong><strong>&#xff0c;复制进程&#xff0c;父进程运行命令“</strong><strong>ls –l”</strong><strong>&#xff0c;把运行结果写入管道&#xff0c;子进程从管道中读取“</strong><strong>ls -l</strong><strong>”的结果&#xff0c;把读出的作为输入接着运行“</strong><strong>grep .c</strong><strong>”。</strong></p> 
+ <p><strong>三、共享内存</strong></p> 
+ <p><strong>1</strong><strong>、设计一个程序&#xff0c;要求创建进程&#xff0c;父子进程通过匿名映射实现共享内存</strong><strong>。</strong></p> 
+ <p><strong> </strong></p>
+</div>
+                </div>
+        </div>
+    </article>
+</div>
+<script>
+    // 敏感词替换
+    ~function(blogSensitiveWords){
+        if(blogSensitiveWords){   
+            var getContentViews = document.getElementById("content_views");
+            var getContentTitle = document.getElementById("articleContentId");
+            var contentViewsInnerHTML = getContentViews.innerHTML;
+            var contentTitleInnerHTML = getContentTitle.innerHTML;
+            var keyWordsJsonArr = [];
+            var keyWordsArr = blogSensitiveWords.split(',');
+            function repeatTimes(str, num){
+                return num > 1 ? str += repeatTimes(str, --num): str;
+            }
+            for(var i = 0; i < keyWordsArr.length; i++){
+                var keyWordsJson = {} ;
+                keyWordsJson.key = keyWordsArr[i];
+                keyWordsJson.value = repeatTimes("*",keyWordsArr[i].length);
+                keyWordsJsonArr.push(keyWordsJson);
+            }
+            var reg;
+            for(var i = 0; i < keyWordsJsonArr.length; i++){
+                var item = keyWordsJsonArr[i];
+                reg = new RegExp(item.key+"(?!([^<]*>)|([^<]*<\/a>))","ig");
+                contentViewsInnerHTML = contentViewsInnerHTML.replace(reg,item.value);
+                contentTitleInnerHTML = contentTitleInnerHTML.replace(reg,item.value);
+            }
+            getContentViews.innerHTML=contentViewsInnerHTML;
+            getContentTitle.innerHTML=contentTitleInnerHTML;
+        }
+    }(blogSensitiveWords)
+</script>
+            <div class="hide-article-box hide-article-pos text-center">
+                    <a class="btn-readmore no-login" href="https://passport.csdn.net/account/login" target="_blank" rel="noopener" data-report-view='{"mod":"popu_376","spm":"1001.2101.3001.4248","dest":"https://blog.csdn.net/weixin_34197488/article/details/85782743","strategy":"fans-readmore-login","ab":"new"}' data-report-click='{"mod":"popu_376","spm":"1001.2101.3001.4248","dest":"https://blog.csdn.net/weixin_34197488/article/details/85782743","strategy":"fans-readmore-login","ab":"new","extend1":"粉丝未登录阅读更多"}'>
+                        <span class="follow-text">关注博主即可阅读全文</span>
+                        <img class="chevrondown" src="https://csdnimg.cn/release/blogv2/dist/pc/img/arrowDownAttend.png">
+                    </a>
+            </div>
+<div class="more-toolbox" id="toolBarBox">
+    <span id="fixedBar"></span>
+    <div class="left-toolbox">
+        <ul class="toolbox-list">
+            <li class="tool-item tool-item-size tool-active is-like" id="is-like"><a>
+            <img style="display:none;" id="is-like-imgactive-animation-like" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarThumbUpactive.png" alt="">
+            <img style="display:none" id="is-like-imgactive" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarThumbUpactive.png" alt="">
+            <img style="display:block" id="is-like-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarThumbUp.png" alt="">   
+            <span class="name" id="is-like-span">点赞</span>
+            <span id="spanCount" class="count">
+            </span>
+            </a></li>
+            <li class="tool-item tool-item-size tool-active tool-item-comment">
+                <a href="#commentBox">
+                    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarComment.png" alt="">
+                    <span class="name">评论</span>
+                    <span class="count">
+                    </span>
+                </a>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-QRcode" id="tool-share">
+                <a href="javascript:;" data-report-click='{"mod":"1582594662_002","spm":"1001.2101.3001.4129","ab":"new"}'>
+                    <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarShare.png" alt="">
+                    <span class="name">分享</span>
+                </a>
+                <div class="QRcode" id="tool-QRcode" style="left:-92%;">
+                    <span id="QRcode-close">x</span>
+                    <p class="title">
+                    海报分享
+                    </p>
+                    <div id='shareCode'></div>
+                    <p>
+                    扫一扫，分享海报
+                    </p>
+                </div>
+            </li>
+            <li class="tool-item tool-item-size tool-active is-collection ">
+                <a href="javascript:;" data-report-click='{"mod":"popu_824","spm":"1001.2101.3001.4130","ab":"new"}'>
+                    <img style="display:none" id="is-collection-img-collection" class="animation-dom active-animation" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive.png" alt="">
+                    <img id="is-collection-img" style="display:block" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollect.png" alt="">
+                    <img id="is-collection-imgactive" style="display:none" src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarCollectionActive.png" alt="">
+                    <span class="name" id="is-collection">收藏</span>
+                    <span class="count get-collection" id="get-collection">
+                        1
+                    </span>
+                </a>
+            </li>
+            <li class="tool-item tool-item-size tool-active tool-more">
+              <a class="article-report">
+                <img src="https://csdnimg.cn/release/blogv2/dist/pc/img/tobarReport.png" alt=""><span class="name">举报</span>
+              </a>
+            </li>
+            <li class="tool-item">
+                    <a class="tool-attend tool-bt-button tool-bt-attend" href="javascript:;" data-report-view='{"mod":"1592215036_002","spm":"1001.2101.3001.4232","extend1":"关注"}'>关注</a>
+                <a class="tool-item-follow active-animation" style="display:none;">关注</a>
+            </li>
+            <li class="tool-item">
+                    <p class="company active" id="health-companies" href="javascript:;" >一键三连</p>
+                <span class="triplet-prompt">点赞Mark关注该博主, 随时了解TA的最新博文<img class="close-prompt" src="https://csdnimg.cn/release/blogv2/dist/pc/img/closePrompt.png"></span>
+            </li>
+        </ul>
+        <div style="display:flex">
+         </div>
+    </div>  
+</div>
+<script type=text/javascript crossorigin src="https://csdnimg.cn/release/phoenix/production/qrcode-7c90a92189.min.js"></script>
+<script src="//g.csdnimg.cn/??sharewx/1.2.1/sharewx.js" type="text/javascript"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/collection-box/2.0.2/collection-box.js"></script>
+                <div class="first-recommend-box recommend-box">
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/weixin_38249995/article/details/83587994"  data-report-view='{"ab":"new","mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://blog.csdn.net/weixin_38249995/article/details/83587994"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/weixin_38249995/article/details/83587994" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://blog.csdn.net/weixin_38249995/article/details/83587994"}'  data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai'>
+					<em>Linux</em><em>程序设计</em>第二版练习题（第七章）
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/weixin_38249995" target="_blank"><span class="blog-title">Junhao的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">10-31</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1853
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/weixin_38249995/article/details/83587994" target="_blank"  data-report-click='{"ab":"new","mod":"popu_871","extra":"{\"utm_medium\":\"distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://blog.csdn.net/weixin_38249995/article/details/83587994"}'  data-report-query='utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromBaidu-1.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">1、设计一个程序，要求程序运行后进入一个无限循环，当用户按下中断键（+Z）时，进入程序的自定义信号处理函数，当用户再次按下中断键（+Z）后，结束程序运行。
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;signal.h&amp;gt;
+#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+void fun_ctrl_z();
+...</div>
+			</a>
+		</div>
+	</div>
+</div>
+                </div>
+            <div class="second-recommend-box recommend-box">
+<div class="recommend-item-box type_discussion_topic clearfix" data-url="https://bbs.csdn.net/topics/290074814"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://bbs.csdn.net/topics/290074814"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://bbs.csdn.net/topics/290074814" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://bbs.csdn.net/topics/290074814"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai'>
+					管道创建的问题
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block">12-24</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://bbs.csdn.net/topics/290074814" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai\"}","index":"1","strategy":"BlogCommendFromBaidu","dest":"https://bbs.csdn.net/topics/290074814"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-discussion_topic-BlogCommendFromBaidu-1.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1"><em>linux</em>下C编程: 设计一个程序，要求创建一个管道PIPE，复制<em>进程</em>，父<em>进程</em>运行命令&ldquo;ls -l&rdquo;，把运行结果写入管道，子<em>进程</em>从管道中读取&ldquo;ls -l&rdquo;的结果，把读出的作为输入接着运行&ldquo;grep 7</div>
+			</a>
+		</div>
+	</div>
+</div>
+            </div>
+<a id="commentBox" name="commentBox"></a>
+<div class="comment-box">
+	<div class="comment-edit-box d-flex">
+		<a id="commentsedit"></a>
+		<div class="user-img">
+			<a href="javascript:void(0);" >
+				<img class="show_loginbox" src="https://g.csdnimg.cn/static/user-img/anonymous-User-img.png">
+			</a>
+		</div>
+		<form id="commentform">
+			<img class="comment-sofa-flag" src="https://csdnimg.cn/release/blogv2/dist/pc/img/commentFlag@2x.png">
+			<textarea class="comment-content" name="comment_content" id="comment_content" placeholder="优质评论可以帮助作者获得更高权重"
+				maxlength="1000"></textarea>
+			<div class="opt-box">
+				<div id="ubbtools" class="add_code">
+					<a href="#insertcode" code="code" target="_self"><i class="icon iconfont icon-daima"></i></a>
+				</div>
+				<input type="hidden" id="comment_replyId" name="comment_replyId">
+				<input type="hidden" id="article_id" name="article_id" value="85782743">
+				<input type="hidden" id="comment_userId" name="comment_userId" value="">
+				<input type="hidden" id="commentId" name="commentId" value="">
+				<div class="dropdown" id="myDrap">
+					<a class="dropdown-face d-flex align-items-center" data-toggle="dropdown" role="button"
+						aria-haspopup="true" aria-expanded="false">
+						<div class="txt-selected text-truncate">添加代码片</div>
+						<svg class="icon d-block" width="200px" height="100.00px" viewBox="0 0 2048 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path  d="M597.33333292 298.666667h853.333334L1023.99999992 725.333333 597.33333292 298.666667z"  /></svg>
+					</a>
+					<ul class="dropdown-menu" id="commentCode" aria-labelledby="drop4">
+						<li><a data-code="html">HTML/XML</a></li>
+						<li><a data-code="objc">objective-c</a></li>
+						<li><a data-code="ruby">Ruby</a></li>
+						<li><a data-code="php">PHP</a></li>
+						<li><a data-code="csharp">C</a></li>
+						<li><a data-code="cpp">C++</a></li>
+						<li><a data-code="javascript">JavaScript</a></li>
+						<li><a data-code="python">Python</a></li>
+						<li><a data-code="java">Java</a></li>
+						<li><a data-code="css">CSS</a></li>
+						<li><a data-code="sql">SQL</a></li>
+						<li><a data-code="plain">其它</a></li>
+					</ul>
+				</div>
+				<div class="right-box" id="rightBox" data-type="2">
+							<span id="tip_comment" class="tip">还能输入<em>1000</em>个字符</span>
+							<a data-report-view='{"spm":"3001.4374"}' data-report-click='{"spm":"3001.4374"}' class="btn btn-sm btn-quick-comment" id="quickComment">“速评一下”</a>
+							<a data-report-click='{"mod":"1582594662_003","spm":"1001.2101.3001.4227","ab":"new"}'><input type="submit"
+									class="btn btn-sm btn-comment" value="发表评论"></a>
+				</div>
+			</div>
+		</form>
+		<input type="button" class="bt-comment-show" value="评论">
+	</div>
+	<div class="comment-list-container">
+		<a id="comments"></a>
+		<div class="comment-list-box">
+		</div>
+		<div id="commentPage" class="pagination-box d-none"></div>
+		<div class="opt-box text-center">
+			<div class="btn btn-sm btn-link-blue" id="btnMoreComment"></div>
+		</div>
+	</div>
+</div>            <div class="recommend-box insert-baidu-box">
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/furney/article/details/7542250"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai\"}","index":"2","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/furney/article/details/7542250"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/furney/article/details/7542250" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai\"}","index":"2","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/furney/article/details/7542250"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai'>
+					<em>Linux</em><em>程序设计</em>&mdash;&mdash;<em>进程</em><em>间</em><em>通信</em>：管道
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/furney" target="_blank"><span class="blog-title">CS练功房</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-09</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					2578
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/furney/article/details/7542250" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai\"}","index":"2","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/furney/article/details/7542250"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-2.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">使用信号在<em>进程</em><em>间</em><em>通信</em>，传送的信息只限于一个信号值。更多的数据交换需要使用一种新的机制&mdash;&mdash;管道。管道（pipe）把一个<em>进程</em>的输出连接到另一个<em>进程</em>的输入。
+对shell命令的连接就是通过管道实现的，使用管道符号&quot;｜&quot;连接。
+1、<em>进程</em>管道
+使用popen和pclose创建和关闭管道。popen允许一个程序将另一个程序作为新<em>进程</em>启动，并可以传递数据给它或者通过它接收数据。
+
+#include</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://tennysonsky.blog.csdn.net/article/details/46009361"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai\"}","index":"3","strategy":"OPENSEARCH","dest":"https://tennysonsky.blog.csdn.net/article/details/46009361"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://tennysonsky.blog.csdn.net/article/details/46009361" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai\"}","index":"3","strategy":"OPENSEARCH","dest":"https://tennysonsky.blog.csdn.net/article/details/46009361"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai'>
+					<em>Linux</em>系统编程&mdash;&mdash;<em>进程</em><em>间</em><em>通信</em>概述
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/tennysonsky" target="_blank"><span class="blog-title">秋叶原 &amp;&amp; Mike || 麦克</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-26</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1万+
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://tennysonsky.blog.csdn.net/article/details/46009361" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai\"}","index":"3","strategy":"OPENSEARCH","dest":"https://tennysonsky.blog.csdn.net/article/details/46009361"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-3.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1"><em>进程</em>是一个独立的资源分配单元，不同<em>进程</em>（这里所说的<em>进程</em>通常指的是用户<em>进程</em>）之<em>间</em>的资源是独立的，没有关联，不能在一个<em>进程</em>中直接访问另一个<em>进程</em>的资源（例如打开的文件描述符）。
+
+但是，<em>进程</em>不是孤立的，不同的<em>进程</em>需要进行信息的交互和状态的传递等，因此需要<em>进程</em><em>间</em><em>通信</em>( IPC：Inter Processes Communication )。</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/wei_cheng18/article/details/79658209"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai\"}","index":"4","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/wei_cheng18/article/details/79658209"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/wei_cheng18/article/details/79658209" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai\"}","index":"4","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/wei_cheng18/article/details/79658209"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai'>
+					【<em>Linux</em>】管道实现<em>进程</em><em>间</em><em>通信</em>
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/wei_cheng18" target="_blank"><span class="blog-title">Cheng_913的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">03-22</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					3411
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/wei_cheng18/article/details/79658209" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai\"}","index":"4","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/wei_cheng18/article/details/79658209"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-4.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">一. <em>进程</em><em>间</em><em>通信</em>(IPC)
+
+　　我们知道<em>进程</em>之<em>间</em>都是相互独立的，任何一个<em>进程</em>的全局变量在另一个<em>进程</em>中是看不到的，如果<em>进程</em>之<em>间</em>需要交换数据就要通过内核。<em>进程</em><em>间</em><em>通信</em>(InterProcess Communication)的本质就是让两个<em>进程</em>看到共同的资源。
+
+
+
+<em>进程</em><em>间</em><em>通信</em>的目的
+
+
+数据传输：一个<em>进程</em>需要将它的数据发送给另一个<em>进程</em>
+资源共享：多个<em>进程</em>之<em>间</em>共享同样的资源
+通知事件：一个<em>进程</em>需要向另一...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/adorable_/article/details/80465790"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai\"}","index":"5","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/adorable_/article/details/80465790"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/adorable_/article/details/80465790" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai\"}","index":"5","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/adorable_/article/details/80465790"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai'>
+					<em>Linux</em><em>进程</em><em>间</em><em>通信</em>之共享内存篇
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/adorable_" target="_blank"><span class="blog-title">adorable_的博客</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">05-26</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1764
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/adorable_/article/details/80465790" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai\"}","index":"5","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/adorable_/article/details/80465790"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-5.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">
+  共享内存
+
+
+&emsp;&emsp;共享内存是Lunix系统中最底层的<em>通信</em>机制，也是最快的<em>通信</em>机制。共享内存通过两个或多个<em>进程</em>共享同一块内存区域来实现<em>进程</em><em>间</em>的<em>通信</em>，就如同 malloc() 函数向不同<em>进程</em>返回了指向同一个物理内存区域的指针。通常是由一个<em>进程</em>创建一块共享内存区域，然后多个<em>进程</em>可以对其进行访问，一个<em>进程</em>将要传出的数据存放到共享内存中，另一个或多个<em>进程</em>则直接从共享内存中读取数据。因此这种<em>通信</em>方式是最...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/zhangxiangDavaid/article/details/46896031"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai\"}","index":"6","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/zhangxiangDavaid/article/details/46896031"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/zhangxiangDavaid/article/details/46896031" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai\"}","index":"6","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/zhangxiangDavaid/article/details/46896031"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai'>
+					<em>linux</em>系统编程：<em>进程</em><em>间</em><em>通信</em>-fifo
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/zhangxiangDavaid" target="_blank"><span class="blog-title">CCPP Blog</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">07-15</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1308
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/zhangxiangDavaid/article/details/46896031" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai\"}","index":"6","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/zhangxiangDavaid/article/details/46896031"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-6.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1"><em>进程</em><em>间</em><em>通信</em>-fifo
+<em>进程</em><em>间</em><em>通信</em>的另一种方式是fifo。fifo是另一种管道：有名管道。从名字可以看出，它也是队列。
+使用fifo<em>通信</em>前，得先创建fifo</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/iteye_2116/article/details/82536494"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai\"}","index":"7","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/iteye_2116/article/details/82536494"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/iteye_2116/article/details/82536494" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai\"}","index":"7","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/iteye_2116/article/details/82536494"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai'>
+					<em>Linux</em><em>进程</em><em>间</em><em>通信</em>&mdash;&mdash;使用信号量
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/iteye_2116" target="_blank"><span class="blog-title">haierboos</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">08-24</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					1727
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/iteye_2116/article/details/82536494" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai\"}","index":"7","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/iteye_2116/article/details/82536494"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-7.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">这篇文章将讲述别一种<em>进程</em><em>间</em><em>通信</em>的机制&mdash;&mdash;信号量。注意请不要把它与之前所说的信号混淆起来，信号与信号量是不同的两种事物。有关信号的更多内容，可以阅读我的另一篇文章：<em>Linux</em><em>进程</em><em>间</em><em>通信</em>&mdash;&mdash;使用信号。下面就进入信号量的讲解。
+
+一、什么是信号量
+为了防止出现因多个程序同时访问一个共享资源而引发的一系列问题，我们需要一种方法，它可以通过生成并使用令牌来授权，在任一时刻只能有一个执行线程访问代码的临...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/qq_37653144/article/details/83927634"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai\"}","index":"8","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/qq_37653144/article/details/83927634"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/qq_37653144/article/details/83927634" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai\"}","index":"8","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/qq_37653144/article/details/83927634"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai'>
+					<em>进程</em><em>间</em><em>通信</em>之<em>Linux</em>管道编程
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/qq_37653144" target="_blank"><span class="blog-title">程序人生</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">11-10</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					2214
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/qq_37653144/article/details/83927634" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai\"}","index":"8","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/qq_37653144/article/details/83927634"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-8.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">管道简述
+
+管道（pipe）是Unix/<em>Linux</em>中最常见的<em>进程</em><em>间</em><em>通信</em>方式之一，它在两个<em>进程</em>之<em>间</em>实现一个数据流通的通道，数据以一种数据流的方式在<em>进程</em><em>间</em>流动。在系统中，管道相当于文件系统上的一个文件，用于缓存所要传输的数据。在某些特性上又不同于文件，例如当数据读出后，管道中就没有数据了，但文件没有这个特性。管道有两个特点：
+
+&middot;部分系统下的管道是半双工的，数据在同一时<em>间</em>只能向一个方向流动。从实现的角...</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_other clearfix" data-url="https://plugin.csdn.net/"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.453374.not_use_machine_learn_pai\"}","index":"9","strategy":"11_453374_RCMD","dest":"https://plugin.csdn.net/"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://plugin.csdn.net/" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.453374.not_use_machine_learn_pai\"}","index":"9","strategy":"11_453374_RCMD","dest":"https://plugin.csdn.net/"}'  data-report-query='utm_medium=distribute.pc_relevant.453374.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.453374.not_use_machine_learn_pai'>
+					CSDN开发助手，集成开发者常用工具，提升开发效率
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info display-flex">
+					<span class="info-block"></span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://plugin.csdn.net/" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.453374.not_use_machine_learn_pai\"}","index":"9","strategy":"11_453374_RCMD","dest":"https://plugin.csdn.net/"}'  data-report-query='utm_medium=distribute.pc_relevant.453374.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.453374.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">支持本地书签、tab页、历史记录搜索； 集成CSDN搜索结果； 他是一个时<em>间</em>转换工具； 他是一个计算器； 他是。。。，更多功能正在添加中</div>
+			</a>
+		</div>
+	</div>
+</div>
+<div class="recommend-item-box type_blog clearfix" data-url="https://blog.csdn.net/friday5pm/article/details/1388076"  data-report-view='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai\"}","index":"10","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/friday5pm/article/details/1388076"}'>
+	<div class="content-box">
+		<div class="content-blog display-flex">
+			<div class="title-box">
+				<a href="https://blog.csdn.net/friday5pm/article/details/1388076" class="tit ellipsis-online ellipsis-online-1" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai\"}","index":"10","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/friday5pm/article/details/1388076"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai'>
+					共享内存
+				</a>
+			</div>
+			<div class="info-box display-flex">
+				<div class="info">
+					<a href="https://blog.csdn.net/friday5pm" target="_blank"><span class="blog-title">friday5pm的专栏</span></a>
+				</div>
+				<div class="info display-flex">
+					<span class="info-block time">11-16</span>
+					<span class="info-block read"><img class="read-img" src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					2505
+					</span>
+				</div>
+			</div>
+		</div>
+		<div class="desc-box">
+			<a href="https://blog.csdn.net/friday5pm/article/details/1388076" target="_blank"  data-report-click='{"ab":"new","mod":"popu_387","extra":"{\"utm_medium\":\"distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai\"}","index":"10","strategy":"OPENSEARCH","dest":"https://blog.csdn.net/friday5pm/article/details/1388076"}'  data-report-query='utm_medium=distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai&depth_1-utm_source=distribute.pc_relevant.none-task-blog-OPENSEARCH-10.not_use_machine_learn_pai'>
+				<div class="desc ellipsis-online ellipsis-online-1">共享内存可以说是最有用的<em>进程</em><em>间</em><em>通信</em>方式，也是最快的IPC形式。两个不同<em>进程</em>A、B共享内存的意思是，同一块物理内存被映射到<em>进程</em>A、B各自的<em>进程</em>地址空<em>间</em>。<em>进程</em>A可以即时看到<em>进程</em>B对共享内存中数据的更新，反之亦然。由于多个<em>进程</em>共享同一块内存区域，必然需要某种同步机制，互斥锁和信号量都可以。采用共享内存<em>通信</em>的一个显而易见的好处是效率高，因为<em>进程</em>可以直接读写内存，而不需要任何数据的拷贝。对于像管道和消息队列</div>
+			</a>
+		</div>
+	</div>
+</div>
+            </div>
+            <div class="template-box">
+                <span>©️2020 CSDN</span>
+                <span>皮肤主题: 大白</span>
+                <span> 设计师:CSDN官方博客</span>
+                <span>
+                    <a href="https://blog.csdn.net/" class="back-home c-blue c-blue-hover c-blue-focus">返回首页</a>
+                </span>
+            </div>
+<div class="blog-footer-bottom" style="margin-top:10px;"></div>
+<script src="https://g.csdnimg.cn/common/csdn-footer/csdn-footer.js" data-isfootertrack="false" type="text/javascript"></script>
+<script type="text/javascript">
+    window.csdn.csdnFooter.options = {
+        el: '.blog-footer-bottom',
+        type: 2
+    }
+</script>        </main>
+<aside class="blog_container_aside">
+    <div id="asideProfile" class="aside-box">
+    <div class="profile-intro d-flex">
+        <div class="avatar-box d-flex justify-content-center flex-column">
+            <a href="https://blog.csdn.net/weixin_34197488" data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4121","dest":"https://blog.csdn.net/weixin_34197488","ab":"new"}'>
+                <img src="https://profile.csdnimg.cn/3/B/3/3_weixin_34197488" class="avatar_pic" username="weixin_34197488">
+            </a>
+        </div>
+        <div class="user-info d-flex flex-column profile-intro-name-box">
+            <div class="profile-intro-name-boxTop">
+                <a href="https://blog.csdn.net/weixin_34197488" class="" id="uid" title="weixin_34197488" data-report-click='{"mod":"popu_379","spm":"1001.2101.3001.4122","dest":"https://blog.csdn.net/weixin_34197488","ab":"new"}'>
+                    <span class="name " username="weixin_34197488">weixin_34197488</span>
+                </a>
+                <span>
+                </span>
+                <span class="flag expert-blog">
+                <span class="bubble">CSDN认证博客专家</span>
+                </span>
+                <span class="flag company-blog">
+                <span class="bubble">CSDN认证企业博客</span>
+                </span>
+            </div>
+            <div class="profile-intro-name-boxFooter">
+                <span class="personal-home-page personal-home-years">码龄5年</span>
+                    <span class="personal-home-page">
+                    <a class="personal-home-certification" href="https://me.csdn.net/weixin_34197488?utm_source=14998968" target="_blank" title="暂无认证">
+                    <img src="https://csdnimg.cn/identity/nocErtification.png" alt="">
+                    暂无认证
+                    </a>
+                    </span>
+            </div>
+        </div>
+    </div>
+    <div class="data-info d-flex item-tiling">
+        <dl class="text-center" title="148">
+            <a href="https://blog.csdn.net/weixin_34197488" data-report-click='{"mod":"1598321000_001","spm":"1001.2101.3001.4310"}' data-report-query="t=1">  
+                <dt><span class="count">148</span></dt>
+                <dd class="font">原创</dd>
+            </a>
+        </dl>
+        <dl class="text-center" data-report-click='{"mod":"1598321000_002","spm":"1001.2101.3001.4311"}' title="57987">
+            <a href="https://blog.csdn.net/rank/writing_rank" target="_blank">
+                <dt><span class="count">5万+</span></dt>
+                <dd class="font">周排名</dd>
+            </a>
+        </dl>
+        <dl class="text-center" title="25341">
+            <a href="https://blog.csdn.net/rank/writing_rank_total" data-report-click='{"mod":"1598321000_003","spm":"1001.2101.3001.4312"}' target="_blank">
+                <dt><span class="count">2万+</span></dt>
+                <dd class="font">总排名</dd>
+            </a>
+        </dl>
+        <dl class="text-center" style="min-width:58px" title="518795">  
+            <dt><span class="count">51万+</span></dt>
+            <dd>访问</dd>
+        </dl>
+        <dl class="text-center" title="5级,点击查看等级说明">
+            <dt><a href="https://blog.csdn.net/home/help.html#level" target="_blank">
+                <img class="level" src="https://csdnimg.cn/identity/blog5.png">
+            </a>
+            </dt>
+            <dd>等级</dd>
+        </dl>
+    </div>
+    <div class="item-rank"></div>
+    <div class="data-info d-flex item-tiling">
+        <dl class="text-center" title="2983">
+            <dt><span class="count">2983</span></dt>
+            <dd>积分</dd>
+        </dl>
+         <dl class="text-center" id="fanBox" title="2577">
+            <dt><span class="count" id="fan">2577</span></dt>
+            <dd>粉丝</dd>
+        </dl>
+        <dl class="text-center" title="68">
+            <dt><span class="count">68</span></dt>
+            <dd>获赞</dd>
+        </dl>
+        <dl class="text-center" title="9">
+            <dt><span class="count">9</span></dt>
+            <dd>评论</dd>
+        </dl>
+        <dl class="text-center" title="367">
+            <dt><span class="count">367</span></dt>
+            <dd>收藏</dd>
+        </dl>
+    </div>
+    <div class="aside-box-footer" data-report-view='{"spm":"3001.4296"}'>
+        <div class="badge-box d-flex">
+            <div class="badge d-flex">
+                <div class="icon-badge" title="1024超级勋章">
+                    <div class="mouse-box">
+                        <img class="medal-img" data-report-click='{"spm":"3001.4296"}' src="https://csdnimg.cn/medal/chaoji1024@240.png" alt="1024超级勋章">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="profile-intro-name-boxOpration">
+        <div class="opt-letter-watch-box">
+        <a class="bt-button personal-letter" href="https://me.csdn.net/weixin_34197488" target="_blank" rel="noopener">TA的主页</a>
+        </div>
+        <div class="opt-letter-watch-box">
+        <a class="bt-button personal-letter" href="https://im.csdn.net/chat/weixin_34197488" target="_blank" rel="noopener">私信</a>
+        </div>
+        <div class="opt-letter-watch-box"> 
+            <a class="personal-watch bt-button" id="btnAttent" >关注</a>  
+        </div>
+    </div>
+</div>
+<div id="asideSearchArticle" class="aside-box">
+	<div class="aside-content search-comter">
+    <div class="aside-search aside-search-blog">         
+        <input type="text" class="input-serch-blog" name="" autocomplete="off" value="" id="search-blog-words" placeholder="搜博主文章">
+        <a class="btn-search-blog">
+                    <img src="//csdnimg.cn/cdn/content-toolbar/csdn-sou.png?v=1587021042">
+        </a>
+    </div>
+    </div>
+</div><div class="box-shadow mb8" data-pid="blog" style="height:250px;">
+    <div class="aside-content text-center" id="cpro_u2734133">
+        <div id="kp_box_56" data-pid="56"><iframe  src="https://kunpeng-sc.csdnimg.cn/?timestamp=1623163941/#/preview/6488?positionId=56&queryWord=&spm=1001.2101.3001.5000" frameborder="0" width= "300px"  height= "250px" scrolling="no" ></iframe><img class="pre-img-lasy"  data-src="https://kunyu.csdn.net/1.png?p=56&a=3243&c=6488&k=&spm=1001.2101.3001.5000&d=1&t=3&u=4f877c579121416da23ad4e532569aa5"></div>
+    </div>
+</div>
+
+
+
+<div id="asideHotArticle" class="aside-box">
+	<h3 class="aside-title">热门文章</h3>
+	<div class="aside-content">
+		<ul class="hotArticle-list">
+			<li>
+				<a href="https://blog.csdn.net/weixin_34197488/article/details/91696837" target="_blank"  data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/weixin_34197488/article/details/91696837","ab":"new"}'>
+				27个常用stata命令（2）
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">7631</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_34197488/article/details/86002345" target="_blank"  data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/weixin_34197488/article/details/86002345","ab":"new"}'>
+				微信小程序之wx.requestPayment 发起微信支付
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">6180</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_34197488/article/details/85856448" target="_blank"  data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/weixin_34197488/article/details/85856448","ab":"new"}'>
+				Windows 10系统出现：“出现系统还原使用的卷影复制服务无法运行...”的问题解决...
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">5296</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_34197488/article/details/92175768" target="_blank"  data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/weixin_34197488/article/details/92175768","ab":"new"}'>
+				以太网帧格式的各字段解释
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">3596</span>
+                </a>
+			</li>
+			<li>
+				<a href="https://blog.csdn.net/weixin_34197488/article/details/86127348" target="_blank"  data-report-click='{"mod":"popu_541","spm":"1001.2101.3001.4139","dest":"https://blog.csdn.net/weixin_34197488/article/details/86127348","ab":"new"}'>
+				【Excle数据透视表】如何重复显示行字段的项目标签
+					<img src="https://csdnimg.cn/release/blogv2/dist/pc/img/readCountWhite.png" alt="">
+					<span class="read">3575</span>
+                </a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div id="asideNewComments" class="aside-box">
+    <h3 class="aside-title">最新评论</h3>
+    <div class="aside-content">
+        <ul class="newcomment-list">
+            <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/weixin_34197488/article/details/86032084#comments_13838001" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/86032084#comments_13838001","ab":"new"}' data-report-view='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/86032084#comments_13838001","ab":"new"}'>SpringBoot系列: 如何优雅停止服务</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/qq_37429370" class="user-name" target="_blank">JK_point: </a>
+                    <span class="code-comments">我就说那些博客都说actuator可以优雅停机，结果一试都是在搞笑呢。</span>
+                </p>
+            </li>
+            <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/weixin_34197488/article/details/85193431#comments_13812668" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/85193431#comments_13812668","ab":"new"}' data-report-view='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/85193431#comments_13812668","ab":"new"}'>架构 － 洋葱图架构</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/tbdp6411" class="user-name" target="_blank">天边tbdp: </a>
+                    <span class="code-comments">不知道写的啥</span>
+                </p>
+            </li>
+            <li>
+                <a class="title text-truncate" target="_blank" href="https://blog.csdn.net/weixin_34197488/article/details/85831960#comments_13374942" data-report-click='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/85831960#comments_13374942","ab":"new"}' data-report-view='{"mod":"popu_542","spm":"1001.2101.3001.4231","dest":"https://blog.csdn.net/weixin_34197488/article/details/85831960#comments_13374942","ab":"new"}'>Java 找到数组中两个元素相加等于指定数的所有组合</a>
+                <p class="comment ellipsis">
+                    <a href="https://my.csdn.net/weixin_40840714" class="user-name" target="_blank">沐雨晴风: </a>
+                    <span class="code-comments">真的牛，转载的还要关注才能阅读</span>
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="asideArchive" class="aside-box">
+    <h3 class="aside-title">最新文章</h3>
+    <div class="aside-content">
+        <ul class="inf_list clearfix">
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_34197488/article/details/94611727" target="_blank" data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/weixin_34197488/article/details/94611727","ab":"new"}' data-report-view='{"mod":"popu_382","dest":"https://blog.csdn.net/weixin_34197488/article/details/94611727","ab":"new"}'>js中的let\var\const</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_34197488/article/details/94606838" target="_blank" data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/weixin_34197488/article/details/94606838","ab":"new"}' data-report-view='{"mod":"popu_382","dest":"https://blog.csdn.net/weixin_34197488/article/details/94606838","ab":"new"}'>计算机视觉资源</a>
+            </li>
+            <li class="clearfix">
+            <a href="https://blog.csdn.net/weixin_34197488/article/details/94503666" target="_blank" data-report-click='{"mod":"popu_382","spm":"1001.2101.3001.4136","dest":"https://blog.csdn.net/weixin_34197488/article/details/94503666","ab":"new"}' data-report-view='{"mod":"popu_382","dest":"https://blog.csdn.net/weixin_34197488/article/details/94503666","ab":"new"}'>自由</a>
+            </li>
+        </ul>
+        <div class="archive-bar"></div>
+        <div class="archive-box">
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2019/07" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2019年</span><span class="num">370篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2018/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2018年</span><span class="num">683篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2017/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2017年</span><span class="num">897篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2016/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2016年</span><span class="num">562篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2015/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2015年</span><span class="num">425篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2014/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2014年</span><span class="num">356篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2013/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2013年</span><span class="num">292篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2012/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2012年</span><span class="num">286篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2011/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2011年</span><span class="num">191篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2010/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2010年</span><span class="num">143篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2009/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2009年</span><span class="num">130篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2008/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2008年</span><span class="num">98篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2007/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2007年</span><span class="num">51篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2006/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2006年</span><span class="num">32篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2005/12" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2005年</span><span class="num">21篇</span></a></div>
+                <div class="archive-list-item"><a href="https://blog.csdn.net/weixin_34197488/article/month/2004/11" target="_blank" data-report-click='{"mod":"popu_538","spm":"1001.2101.3001.4138","ab":"new","dest":""}'><span class="year">2004年</span><span class="num">10篇</span></a></div>
+        </div>
+    </div>
+</div>
+	<div id="footerRightAds" class="isShowFooterAds">
+		<div class="aside-box">
+			<div id="kp_box_57" data-pid="57"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- PC-博客详情页-左下视窗（300*600） -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="1173711872"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=57&a=2488&c=0&k=&spm=1001.2101.3001.5001&d=1&t=3&u=55137e04e1f6405e99c12610703a2cd6"></div>
+		</div>
+	</div>
+    <!-- 详情页显示目录 -->
+<!--文章目录-->
+<div id="asidedirectory" class="aside-box">
+    <div class='groupfile' id="directory">
+        <h3 class="aside-title">目录</h3>
+        <div class="align-items-stretch group_item">
+            <div class="pos-box">
+            <div class="scroll-box">
+                <div class="toc-box"></div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+</aside>
+<script>
+	$("a.flexible-btn").click(function(){
+		$(this).parents('div.aside-box').removeClass('flexible-box');
+		$(this).parents("p.text-center").remove();
+	})
+</script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-tooltip/2.1/user-tooltip.js"></script>
+<script type="text/javascript"  src="https://g.csdnimg.cn/user-medal/1.0.5/user-medal.js"></script>    </div>
+<div class="recommend-right  align-items-stretch clearfix" id="rightAside" data-type="recommend">
+    <aside class="recommend-right_aside">
+        <div id="recommend-right" >
+                        <div class='flex-column aside-box groupfile' id="groupfile">
+                <div class="groupfile-div">
+                <h3 class="aside-title">目录</h3>
+                <div class="align-items-stretch group_item">
+                    <div class="pos-box">
+                        <div class="scroll-box">
+                            <div class="toc-box"></div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+                <div id="recommendAdBox">
+                    <div id="kp_box_479" data-pid="479"><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- PC-博客详情页-右侧视窗300*600 -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1076724771190722"
+     data-ad-slot="8441704093"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script><img class="pre-img-lasy" data-src="https://kunyu.csdn.net/1.png?p=479&a=2487&c=0&k=&spm=1001.2101.3001.4834&d=1&t=3&u=cae93a65b044434a8872c4759868a11e"></div>
+                </div>
+            <div class="recommend-list-box d-flex flex-column aside-box" id="recommend-list-box">
+            <ul class="recommend-fixed-box align-items-stretch">
+                <li class="right-item">
+                    <a href="https://plugin.csdn.net/" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.461471.nonecase\"}","index":"1","strategy":"106_461471_RCMD","dest":"https://plugin.csdn.net/"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.461471.nonecase\"}","index":"1","strategy":"106_461471_RCMD","dest":"https://plugin.csdn.net/"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.461471.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.461471.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>CSDN开发助手，集成开发者常用工具，提升开发效率</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/weixin_43294560/article/details/109828851" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-2.nonecase\"}","index":"2","strategy":"alirec","dest":"https://blog.csdn.net/weixin_43294560/article/details/109828851"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-2.nonecase\"}","index":"2","strategy":"alirec","dest":"https://blog.csdn.net/weixin_43294560/article/details/109828851"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-2.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-2.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>重构-多选框(大小、颜色、选中动画和结果回调)</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/qq_33088807/article/details/109829272" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-3.nonecase\"}","index":"3","strategy":"alirec","dest":"https://blog.csdn.net/qq_33088807/article/details/109829272"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-3.nonecase\"}","index":"3","strategy":"alirec","dest":"https://blog.csdn.net/qq_33088807/article/details/109829272"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-3.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-3.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>使用BeanUtils自动创建JavaBean报错：java.lang.NoClassDefFoundError: org/apache/commons/collections/FastHashMap</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/xtaidt/13126238" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-4.nonecase\"}","index":"4","strategy":"alirec","dest":"https://download.csdn.net/download/xtaidt/13126238"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-4.nonecase\"}","index":"4","strategy":"alirec","dest":"https://download.csdn.net/download/xtaidt/13126238"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-4.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-4.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>阻抗串联相加，串联相减，并联相加，并联相减计算器</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/29648" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-5.nonecase\"}","index":"5","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/29648"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-5.nonecase\"}","index":"5","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/29648"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-5.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-5.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>快速入门CTF逆向</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/u012153232/13126186" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-6.nonecase\"}","index":"6","strategy":"alirec","dest":"https://download.csdn.net/download/u012153232/13126186"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-6.nonecase\"}","index":"6","strategy":"alirec","dest":"https://download.csdn.net/download/u012153232/13126186"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-6.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-6.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>UML类图及、7大设计原则、23种设计模式</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31201" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-7.nonecase\"}","index":"7","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31201"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-7.nonecase\"}","index":"7","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31201"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-7.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-7.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>人脸识别项目二</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/weixin_45902007/article/details/109814010" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-8.nonecase\"}","index":"8","strategy":"alirec","dest":"https://blog.csdn.net/weixin_45902007/article/details/109814010"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-8.nonecase\"}","index":"8","strategy":"alirec","dest":"https://blog.csdn.net/weixin_45902007/article/details/109814010"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-8.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-8.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>数理统计&mdash;&mdash;AQI分析与预测</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38502510/13126204" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-9.nonecase\"}","index":"9","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38502510/13126204"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-9.nonecase\"}","index":"9","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38502510/13126204"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-9.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-9.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>vue中提示$index is not defined错误的解决方式</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31286" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-10.nonecase\"}","index":"10","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31286"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-10.nonecase\"}","index":"10","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31286"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-10.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-10.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>Zabbix 5.2 基础与实践（1）</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/m0_52175697/article/details/109829209" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-11.nonecase\"}","index":"11","strategy":"alirec","dest":"https://blog.csdn.net/m0_52175697/article/details/109829209"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-11.nonecase\"}","index":"11","strategy":"alirec","dest":"https://blog.csdn.net/m0_52175697/article/details/109829209"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-11.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-11.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>【最新】计算机二级资料【2020.11.19】</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/qq_40576653/article/details/109828931" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-12.nonecase\"}","index":"12","strategy":"alirec","dest":"https://blog.csdn.net/qq_40576653/article/details/109828931"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-12.nonecase\"}","index":"12","strategy":"alirec","dest":"https://blog.csdn.net/qq_40576653/article/details/109828931"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-12.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-12.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>剑指Offer 28. 对称的二叉树</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31227" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-13.nonecase\"}","index":"13","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31227"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-13.nonecase\"}","index":"13","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31227"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-13.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-13.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>Cookie 必看实战精讲（大神必经之路）</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38735899/13126202" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-14.nonecase\"}","index":"14","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38735899/13126202"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-14.nonecase\"}","index":"14","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38735899/13126202"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-14.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-14.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>高端大气工作总结计划勇闯新世界PPT模板</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31271" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-15.nonecase\"}","index":"15","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31271"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-15.nonecase\"}","index":"15","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31271"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-15.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-15.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>基本数据类型和转换 视频</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/m0_46428628/article/details/109822328" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-16.nonecase\"}","index":"16","strategy":"alirec","dest":"https://blog.csdn.net/m0_46428628/article/details/109822328"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-16.nonecase\"}","index":"16","strategy":"alirec","dest":"https://blog.csdn.net/m0_46428628/article/details/109822328"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-16.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-16.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>设计模式学习（一）</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/Tom197/article/details/109829220" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-17.nonecase\"}","index":"17","strategy":"alirec","dest":"https://blog.csdn.net/Tom197/article/details/109829220"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-17.nonecase\"}","index":"17","strategy":"alirec","dest":"https://blog.csdn.net/Tom197/article/details/109829220"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-17.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-17.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>简单打印图形</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/qq_44239058/article/details/109829236" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-18.nonecase\"}","index":"18","strategy":"alirec","dest":"https://blog.csdn.net/qq_44239058/article/details/109829236"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-18.nonecase\"}","index":"18","strategy":"alirec","dest":"https://blog.csdn.net/qq_44239058/article/details/109829236"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-18.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-18.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>软件测试：逻辑覆盖</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/wy862740672/13126245" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-19.nonecase\"}","index":"19","strategy":"alirec","dest":"https://download.csdn.net/download/wy862740672/13126245"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-19.nonecase\"}","index":"19","strategy":"alirec","dest":"https://download.csdn.net/download/wy862740672/13126245"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-19.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-19.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>xftp7的稳定版本</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31257" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-20.nonecase\"}","index":"20","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31257"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-20.nonecase\"}","index":"20","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31257"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-20.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-20.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>async 异步编程</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_44886716/13126236" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-21.nonecase\"}","index":"21","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_44886716/13126236"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-21.nonecase\"}","index":"21","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_44886716/13126236"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-21.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-21.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>VirtualBox-6.1.2-135663-Win.rar</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/qq_33556185/13126230" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-22.nonecase\"}","index":"22","strategy":"alirec","dest":"https://download.csdn.net/download/qq_33556185/13126230"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-22.nonecase\"}","index":"22","strategy":"alirec","dest":"https://download.csdn.net/download/qq_33556185/13126230"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-22.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-22.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>java封装的echarts工具包</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/AAAnnnnNNN/article/details/109828698" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-23.nonecase\"}","index":"23","strategy":"alirec","dest":"https://blog.csdn.net/AAAnnnnNNN/article/details/109828698"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-23.nonecase\"}","index":"23","strategy":"alirec","dest":"https://blog.csdn.net/AAAnnnnNNN/article/details/109828698"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-23.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-23.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>JS知识点：闭包</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/qq_41537102/article/details/109821570" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-24.nonecase\"}","index":"24","strategy":"alirec","dest":"https://blog.csdn.net/qq_41537102/article/details/109821570"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-24.nonecase\"}","index":"24","strategy":"alirec","dest":"https://blog.csdn.net/qq_41537102/article/details/109821570"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-24.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-24.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>JAVASE 小白学习笔记（5）详解数组的使用</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://smscwjh.blog.csdn.net/article/details/109829295" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-25.nonecase\"}","index":"25","strategy":"alirec","dest":"https://smscwjh.blog.csdn.net/article/details/109829295"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-25.nonecase\"}","index":"25","strategy":"alirec","dest":"https://smscwjh.blog.csdn.net/article/details/109829295"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-25.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-25.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>老照片翻新和修复的价格与价值：青春回忆和思恋</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31295" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-26.nonecase\"}","index":"26","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31295"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-26.nonecase\"}","index":"26","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31295"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-26.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-26.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>thinkphpCms系统</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/Subifuchen/article/details/109829196" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-27.nonecase\"}","index":"27","strategy":"alirec","dest":"https://blog.csdn.net/Subifuchen/article/details/109829196"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-27.nonecase\"}","index":"27","strategy":"alirec","dest":"https://blog.csdn.net/Subifuchen/article/details/109829196"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-27.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-27.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>[微语 20.11.19] 收敛</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/sinat_38816924/article/details/109828767" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-28.nonecase\"}","index":"28","strategy":"alirec","dest":"https://blog.csdn.net/sinat_38816924/article/details/109828767"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-28.nonecase\"}","index":"28","strategy":"alirec","dest":"https://blog.csdn.net/sinat_38816924/article/details/109828767"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-28.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-28.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>文件乱码处理</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38724349/13126240" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-29.nonecase\"}","index":"29","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38724349/13126240"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-29.nonecase\"}","index":"29","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38724349/13126240"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-29.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-29.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>如何区分vue中的v-show 与 v-if</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://panchuangai.blog.csdn.net/article/details/109829271" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-30.nonecase\"}","index":"30","strategy":"alirec","dest":"https://panchuangai.blog.csdn.net/article/details/109829271"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-30.nonecase\"}","index":"30","strategy":"alirec","dest":"https://panchuangai.blog.csdn.net/article/details/109829271"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-30.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-30.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>监督学习和kNN分类初学者教程</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38716460/13126253" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-31.nonecase\"}","index":"31","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38716460/13126253"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-31.nonecase\"}","index":"31","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38716460/13126253"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-31.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-31.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>国庆周年纪念党政军警通用PPT模板</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38710524/13126216" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-32.nonecase\"}","index":"32","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38710524/13126216"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-32.nonecase\"}","index":"32","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38710524/13126216"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-32.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-32.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>Vue实现简单的拖拽效果</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31226" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-33.nonecase\"}","index":"33","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31226"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-33.nonecase\"}","index":"33","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31226"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-33.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-33.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>AJAX 必看实战精讲（大神必经之路）</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/mage_linux/article/details/109829383" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-34.nonecase\"}","index":"34","strategy":"alirec","dest":"https://blog.csdn.net/mage_linux/article/details/109829383"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-34.nonecase\"}","index":"34","strategy":"alirec","dest":"https://blog.csdn.net/mage_linux/article/details/109829383"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-34.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-34.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>分布式体系下，服务分层监控策略</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/Crazy_young_man/article/details/109828974" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-35.nonecase\"}","index":"35","strategy":"alirec","dest":"https://blog.csdn.net/Crazy_young_man/article/details/109828974"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-35.nonecase\"}","index":"35","strategy":"alirec","dest":"https://blog.csdn.net/Crazy_young_man/article/details/109828974"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-35.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-35.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>Windows安装Jenkins并修改主目录路径</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38520258/13126208" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-36.nonecase\"}","index":"36","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38520258/13126208"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-36.nonecase\"}","index":"36","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38520258/13126208"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-36.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-36.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>Vue中关闭弹窗组件时销毁并隐藏操作</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_38636461/13126246" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-37.nonecase\"}","index":"37","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38636461/13126246"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-37.nonecase\"}","index":"37","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_38636461/13126246"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-37.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-37.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>国庆庆典党政军警类通用性PPT模板</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://edu.csdn.net/course/detail/31221" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-38.nonecase\"}","index":"38","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31221"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-38.nonecase\"}","index":"38","strategy":"alirec","dest":"https://edu.csdn.net/course/detail/31221"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-38.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-edu_course-alirec-38.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>微信打卡小程序教学</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://blog.csdn.net/yuyu_2019/article/details/109828252" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-39.nonecase\"}","index":"39","strategy":"alirec","dest":"https://blog.csdn.net/yuyu_2019/article/details/109828252"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-blog-alirec-39.nonecase\"}","index":"39","strategy":"alirec","dest":"https://blog.csdn.net/yuyu_2019/article/details/109828252"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-blog-alirec-39.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-blog-alirec-39.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>css 竖着排版 自动换行</h5>
+                            </div>
+                        </div>
+                    </a>
+                </li> 
+                <li class="right-item">
+                    <a href="https://download.csdn.net/download/weixin_42313749/13126188" target="_blank"  data-report-view='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-40.nonecase\"}","index":"40","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_42313749/13126188"}'  data-report-click='{"ab":"new","mod":"popu_858","extra":"{\"utm_medium\":\"distribute.pc_blog_right_sidebar.none-task-download-alirec-40.nonecase\"}","index":"40","strategy":"alirec","dest":"https://download.csdn.net/download/weixin_42313749/13126188"}'  data-report-query='utm_medium=distribute.pc_blog_right_sidebar.none-task-download-alirec-40.nonecase&depth_1-utm_source=distribute.pc_blog_right_sidebar.none-task-download-alirec-40.nonecase'>
+                        <div class="context-box ">
+                            <div class="content clearfix ">
+                                <h5>java web student.zip</h5>
+                            </div>
+                            <span class="download_mark_button ">立即下载 </span>
+                        </div>
+                    </a>
+                </li> 
+            </ul>
+            </div>
+        </div>
+    </aside>
+</div>
+
+</div>
+<div class="mask-dark"></div>
+<script type="text/javascript">
+    var timert = setInterval(function(){
+      sideToolbar = $(".csdn-side-toolbar");
+      if (sideToolbar.length > 0) {
+        sideToolbar.css('cssText','bottom:64px !important;')
+        clearInterval(timert);
+      }
+    }, 200);
+</script>
+<script>
+    var articleId = 85782743;
+    var commentscount = 0;
+    var curentUrl = "https://blog.csdn.net/weixin_34197488/article/details/85782743";
+    var myUrl = "https://my.csdn.net/";
+    var highlight = ["Linux","程序设计","进程","间","通信"];//高亮数组
+    var share_card_url = "https://blog.csdn.net/weixin_34197488/article/shareArticleCardPage?article_id=85782743"
+	var articleType = 2;
+    var baiduKey = "【Linux程序设计】之进程间的通信";
+    var needInsertBaidu = true;
+    var recommendRegularDomainArr = ["blog.csdn.net/.+/article/details/","download.csdn.net/download/","edu.csdn.net/course/detail/","ask.csdn.net/questions/","bbs.csdn.net/topics/","www.csdn.net/gather_.+/"]
+    var codeStyle = "";
+    var baiduSearchType = "title";
+    var canRead = true;
+    var blogMoveHomeArticle = true;
+    var showPcWindowAd = false;
+</script>
+<script src="https://csdnimg.cn/public/sandalstrap/1.4/js/sandalstrap.min.js"></script>
+<div class="skin-boxshadow"></div>
+<div style="display:none;">
+	<img src="" onerror='setTimeout(function(){if(!/(csdn.net|iteye.com|baiducontent.com|googleusercontent.com|360webcache.com|sogoucdn.com|bingj.com|baidu.com)$/.test(window.location.hostname)){window.location.href="\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x77\x77\x2e\x63\x73\x64\x6e\x2e\x6e\x65\x74"}},3000);'>
+</div>
+</body>
+    <!-- 富文本柱状图  -->
+	<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/chart.css"/>
+	<script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/lib/chart.min.js"></script>
+    <script type="text/javascript" src="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/chart/widget2chart.js"></script>
+<script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_highlight-db1e81323a.min.js" type="text/javascript"></script>
+<script src="https://csdnimg.cn/release/blogv2/dist/components/js/pc_wap_common-906586e915.min.js" type="text/javascript"></script>
+<link rel="stylesheet" href="https://csdnimg.cn/release/blog_editor_html/release1.6.12/ckeditor/plugins/codesnippet/lib/highlight/styles/atom-one-light.css">
+<script>
+ // 全局声明
+ if (window.csdn === undefined) {
+      window.csdn = {};
+    }
+    window.csdn.sideToolbar = {
+        options: {
+            report:{
+                isShow: true,
+            },
+            qr: {
+                isShow: false,
+            },
+            guide: {
+                isShow: true
+            }
+        }
+    }
+    $(function(){
+        $(document).on('click',"a.option-box[data-type='report']",function() {
+            window.csdn.userLogin.loadAjax(function(res){
+                showReport(false,articleTitles);
+            })
+        });
+    })
+</script>
+    <script src="https://g.csdnimg.cn/baidu-search/1.0.3/baidu-search.js"  type="text/javascript"></script>
+<script src="https://csdnimg.cn/release/download/old_static/js/qrcode.js"></script>
+<script src="https://csdnimg.cn/release/blogv2/dist/pc/js/common-b286f966c8.min.js" type="text/javascript"></script>
+<script src="https://csdnimg.cn/release/blogv2/dist/pc/js/detail-7ab03f3434.min.js" type="text/javascript"></script>
+<script src="https://csdnimg.cn/release/cart/pub/1.0.4/cart_jsonp.js?v=2" type="text/javascript"></script>
+<script src="https://csdnimg.cn/release/blogv2/dist/pc/js/column-78261cfea6.min.js" type="text/javascript"></script>
+<script src="https://g.csdnimg.cn/side-toolbar/2.8/side-toolbar.js" type="text/javascript"></script>
+<script src="https://g.csdnimg.cn/copyright/1.0.3/copyright.js" type="text/javascript"></script>
+<script>
+    $(".MathJax").remove();
+    if ($('div.markdown_views pre.prettyprint code.hljs').length > 0) {
+        $('div.markdown_views')[0].className = 'markdown_views';
+    }
+</script>
+<script type="text/javascript" src="https://csdnimg.cn/release/blog_mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            "HTML-CSS": {
+                    linebreaks: { automatic: true, width: "94%container" },
+                    imageFont: null
+            },
+            tex2jax: {
+                preview: "none"
+            },
+            mml2jax: {
+                preview: 'none'
+            }
+    });
+</script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/user-login/2.3.2/user-login.js"></script>
+<script type="text/javascript" crossorigin src="https://g.csdnimg.cn/login-box/1.1.4/login-box.js"></script></html>

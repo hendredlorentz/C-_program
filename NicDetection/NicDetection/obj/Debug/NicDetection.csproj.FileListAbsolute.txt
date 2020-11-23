@@ -1,0 +1,10 @@
+G:\C#prictise\NicDetection\NicDetection\bin\Debug\NicDetection.exe.config
+G:\C#prictise\NicDetection\NicDetection\bin\Debug\NicDetection.exe
+G:\C#prictise\NicDetection\NicDetection\bin\Debug\NicDetection.pdb
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.csprojAssemblyReference.cache
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.Form1.resources
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.Properties.Resources.resources
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.csproj.GenerateResource.cache
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.csproj.CoreCompileInputs.cache
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.exe
+G:\C#prictise\NicDetection\NicDetection\obj\Debug\NicDetection.pdb

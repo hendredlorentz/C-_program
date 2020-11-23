@@ -1,0 +1,39 @@
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe.config
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.pdb
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csprojResolveAssemblyReference.cache
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Form1.resources
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Properties.Resources.resources
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csproj.GenerateResource.Cache
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.exe
+c:\users\xiegly\documents\visual studio 2015\Projects\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.pdb
+E:\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe.config
+E:\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe
+E:\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.pdb
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csprojAssemblyReference.cache
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Form1.resources
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Properties.Resources.resources
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csproj.GenerateResource.cache
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csproj.CoreCompileInputs.cache
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.exe
+E:\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.pdb
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\bin\Debug\WebClientDownload.exe.config
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\bin\Debug\WebClientDownload.exe
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\bin\Debug\WebClientDownload.pdb
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.csprojAssemblyReference.cache
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.Form1.resources
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.Properties.Resources.resources
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.csproj.GenerateResource.cache
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.csproj.CoreCompileInputs.cache
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.exe
+G:\大三第一学期（重要专业课）自我学习\testTheKuangjia\网络协议编程实验4\WebClient\WebClientDownload\obj\Debug\WebClientDownload.pdb
+G:\C#prictise\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe.config
+G:\C#prictise\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.exe
+G:\C#prictise\WebClientDownload\WebClientDownload\bin\Debug\WebClientDownload.pdb
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csprojAssemblyReference.cache
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Form1.resources
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.Properties.Resources.resources
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csproj.GenerateResource.cache
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.csproj.CoreCompileInputs.cache
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.exe
+G:\C#prictise\WebClientDownload\WebClientDownload\obj\Debug\WebClientDownload.pdb

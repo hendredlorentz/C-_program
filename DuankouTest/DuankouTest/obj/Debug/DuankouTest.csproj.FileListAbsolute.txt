@@ -1,0 +1,10 @@
+G:\C#prictise\DuankouTest\DuankouTest\bin\Debug\DuankouTest.exe.config
+G:\C#prictise\DuankouTest\DuankouTest\bin\Debug\DuankouTest.exe
+G:\C#prictise\DuankouTest\DuankouTest\bin\Debug\DuankouTest.pdb
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.csprojAssemblyReference.cache
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.Form1.resources
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.Properties.Resources.resources
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.csproj.GenerateResource.cache
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.csproj.CoreCompileInputs.cache
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.exe
+G:\C#prictise\DuankouTest\DuankouTest\obj\Debug\DuankouTest.pdb

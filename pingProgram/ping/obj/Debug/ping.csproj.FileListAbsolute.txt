@@ -1,0 +1,10 @@
+G:\C#prictise\ping\ping\bin\Debug\ping.exe.config
+G:\C#prictise\ping\ping\bin\Debug\ping.exe
+G:\C#prictise\ping\ping\bin\Debug\ping.pdb
+G:\C#prictise\ping\ping\obj\Debug\ping.csprojAssemblyReference.cache
+G:\C#prictise\ping\ping\obj\Debug\ping.Properties.Resources.resources
+G:\C#prictise\ping\ping\obj\Debug\ping.csproj.GenerateResource.cache
+G:\C#prictise\ping\ping\obj\Debug\ping.csproj.CoreCompileInputs.cache
+G:\C#prictise\ping\ping\obj\Debug\ping.exe
+G:\C#prictise\ping\ping\obj\Debug\ping.pdb
+G:\C#prictise\ping\ping\obj\Debug\ping.Form1.resources
