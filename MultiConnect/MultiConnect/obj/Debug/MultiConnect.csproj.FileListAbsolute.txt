@@ -1,0 +1,10 @@
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\bin\Debug\MultiConnect.exe.config
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\bin\Debug\MultiConnect.exe
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\bin\Debug\MultiConnect.pdb
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.csprojAssemblyReference.cache
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.Form1.resources
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.Properties.Resources.resources
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.csproj.GenerateResource.cache
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.csproj.CoreCompileInputs.cache
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.exe
+G:\大三第一学期（重要专业课）自我学习\c#题库\MultiConnect\MultiConnect\obj\Debug\MultiConnect.pdb
